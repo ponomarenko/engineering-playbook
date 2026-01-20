@@ -12,6 +12,8 @@ Development practices for frontend, backend, and testing.
 - [SQL Connection Strings](./02-development/database/sql-connections.md)
 
 ### Git
+- [Git Basics & Essential Commands](./02-development/git/git-basics.md)
+- [Git LFS Guide](./02-development/git/git-lfs-guide.md)
 - [Advanced Aliases & Log Formats](./02-development/git/advanced-aliases.md)
 
 ### JavaScript / NPM
@@ -82,11 +84,13 @@ Development tools and utilities.
 - [Debug Scripts & Flags](./08-tools/chrome/debug-scripts.md)
 
 ### Version Control
+- [Git Advanced Operations](./08-tools/version-control/git-advanced-operations.md)
 - [Squashing Commits](./08-tools/version-control/squashing-commits.md)
 
-_Coming soon: Git Advanced, Git Workflows, GitHub & GitLab Tips_
+_Coming soon: Git Workflows, GitHub & GitLab Tips_
 
 ### Terminal
+- [PowerShell Git Integration](./08-tools/terminal/powershell-git-integration.md)
 _Coming soon: Terminal Productivity, Aliases & Functions, Tools Ecosystem_
 
 ### Utilities
@@ -127,7 +131,9 @@ Quick reference materials and resources.
 - [Troubleshooting Template](./templates/troubleshooting-template.md)
 
 ### Cheatsheets
-_Coming soon: Git, Docker, Kubernetes, AWS, Bash_
+- [Git Troubleshooting Cheatsheet](./12-reference/cheatsheets/git-troubleshooting-cheatsheet.md)
+
+_Coming soon: Docker, Kubernetes, AWS, Bash_
 
 ### Resources
 _Coming soon: Glossary, Quick Links, External Resources_
