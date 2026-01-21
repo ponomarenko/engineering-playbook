@@ -5,6 +5,7 @@ Advanced Git techniques for complex workflows and repository management.
 ## Undoing Changes
 
 ### Reset Commits
+
 ```bash
 # Soft reset - keep changes staged
 git reset --soft HEAD~1  # Undo last commit
@@ -20,6 +21,7 @@ git reset --hard commit-hash
 ```
 
 **Example workflow:**
+
 ```bash
 # You made 3 commits but want to combine them
 git reset --soft HEAD~3
@@ -28,6 +30,7 @@ git commit -m "Combined commit message"
 ```
 
 ### Amend Last Commit
+
 ```bash
 # Change commit message
 git commit --amend
@@ -42,6 +45,7 @@ git commit --amend -m "New commit message"
 ```
 
 ### View Reflog (Undo History)
+
 ```bash
 # See all recent actions
 git reflog
@@ -54,6 +58,7 @@ git reset --hard HEAD@{2}
 ```
 
 **Example:**
+
 ```bash
 git reflog
 # Output:
@@ -68,6 +73,7 @@ git reset --hard HEAD@{2}
 ## Interactive Rebase
 
 ### Rebase Basics
+
 ```bash
 # Rebase last N commits
 git rebase -i HEAD~3
@@ -84,6 +90,7 @@ git rebase --abort
 ```
 
 **Example interactive rebase:**
+
 ```bash
 git rebase -i HEAD~3
 
@@ -103,6 +110,7 @@ squash ghi9012 Third commit
 ## Force Pushing
 
 ### Safe Force Push
+
 ```bash
 # Safe force push (fails if remote changed)
 git push --force-with-lease origin branch-name
@@ -116,6 +124,7 @@ git push --force origin branch-name
 ## Git Internals
 
 ### Check File in Git Index
+
 ```bash
 # List file in index with hash
 git ls-files -s path/to/file.ext
@@ -128,6 +137,7 @@ git cat-file blob hash-from-above
 ```
 
 **Example:**
+
 ```bash
 git ls-files -s src/assets/images/logo.png
 # Output:
@@ -139,6 +149,7 @@ git cat-file -s d356cef18c96c92038972db14735676f99290290
 ```
 
 ### Get File Hash
+
 ```bash
 # Get Git hash for a file
 git hash-object path/to/file.ext
@@ -151,6 +162,7 @@ git hash-object path/to/file.ext
 ### Remove Files from All Commits (Sensitive Data)
 
 **Warning: This rewrites history!**
+
 ```bash
 # Remove file from entire history
 git filter-branch --force --index-filter \
@@ -164,12 +176,14 @@ git filter-repo --path path/to/file.ext --invert-paths
 ## Common Advanced Scenarios
 
 ### Combine Last 3 Commits
+
 ```bash
 git reset --soft HEAD~3
 git commit -m "Combined commit message"
 ```
 
 ### Split Last Commit
+
 ```bash
 git reset HEAD~1
 # Now stage and commit files separately
@@ -180,6 +194,7 @@ git commit -m "Second part"
 ```
 
 ### Accidentally Committed Wrong Files
+
 ```bash
 # Remove from last commit but keep changes
 git reset --soft HEAD~1
@@ -203,13 +218,97 @@ git commit --amend --no-edit
 
 ## Quick Reference
 
-| Task | Command |
-|------|---------|
-| Undo last commit (keep changes) | `git reset --soft HEAD~1` |
-| Undo last commit (discard changes) | `git reset --hard HEAD~1` |
-| Amend last commit | `git commit --amend --no-edit` |
-| Combine 3 commits | `git reset --soft HEAD~3` then `git commit` |
-| Safe force push | `git push --force-with-lease origin branch` |
+| Task                               | Command                                     |
+| ---------------------------------- | ------------------------------------------- |
+| Undo last commit (keep changes)    | `git reset --soft HEAD~1`                   |
+| Undo last commit (discard changes) | `git reset --hard HEAD~1`                   |
+| Amend last commit                  | `git commit --amend --no-edit`              |
+| Combine 3 commits                  | `git reset --soft HEAD~3` then `git commit` |
+| Safe force push                    | `git push --force-with-lease origin branch` |
+
+---
+
+## Monorepo Version Diffing
+
+### Context
+
+When Git tags are not used for versions in a monorepo, you can track changes through the history of `package.json` files.
+
+### Core Commands
+
+#### 1. Find Commits Where Version Changed
+
+```bash
+git log --all --oneline -p -- packages/your-package/package.json | Select-String -Pattern '"version".*X\.Y\.[0-9]' -Context 0,10
+```
+
+**Example:** Searching for versions 1.1.x
+
+```bash
+git log --all --oneline -p -- packages/your-package/package.json | Select-String -Pattern '"version".*1\.1\.[0-3]' -Context 0,10
+```
+
+**Result:** Shows commits with hash and diff fragments where the version was changed.
+
+#### 2. Get List of Commits Between Versions
+
+Once commit hashes are found (e.g., `abc1234` for v1.1.0 and `def5678` for v1.1.2):
+
+```bash
+git log --oneline abc1234..def5678 -- packages/your-package
+```
+
+**Result:** List of all commits that touched the package between these versions.
+
+#### 3. View Commit Details
+
+```bash
+git show <commit-hash> --stat
+```
+
+**Result:** Shows author, date, message, and list of changed files.
+
+#### 4. Full Diff Between Versions
+
+```bash
+git diff abc1234..def5678 -- packages/your-package
+```
+
+**Result:** All code changes in the package between two versions.
+
+### Alternative Approaches
+
+#### Search by Commit Message
+
+```bash
+git log --all --oneline --grep="version.*1\.1" -- packages/your-package/package.json
+```
+
+#### View History of a Single File
+
+```bash
+git log -p -- packages/your-package/package.json
+```
+
+#### Find Commit by Specific Version
+
+```bash
+git log --all -S '"version": "1.1.0"' --source --all -- packages/your-package/package.json
+```
+
+### Workflow
+
+1. Find commit hashes for desired versions via `git log -p`.
+2. Get list of commits between versions via `git log <hash1>..<hash2>`.
+3. View detailed changes via `git diff <hash1>..<hash2>`.
+4. If needed, view individual commits via `git show <hash>`.
+
+### Tips
+
+- Use `--oneline` for compact output.
+- `--stat` shows statistics of changes without full diff.
+- `-p` or `--patch` shows full changes.
+- `-- path/to/file` limits search to specific file/directory.
 
 ---
 
